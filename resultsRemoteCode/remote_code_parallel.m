@@ -1,11 +1,11 @@
 clear;
 addpath('classes');
+addpath('resultsAndPlots');
 rng(1);
 
 % Input model parameters
 meanS = sqrt(25000^2 - 5100^2);
-typeDistributionMean = ...
-    [1*10^(-5), 1330, 4340, meanS]; % Original A was 1.9*10^-3
+typeDistributionMean = [1*10^(-5), 1330, 4340, meanS]; % Original A was 1.9*10^-3
 typeDistributionLogCovariance = ...
     [ 0.25 -0.01 -0.12 0    ; % c11 = 0.25 originally
      -0.01  0.28 -0.03 0    ; % c22 = 0.98 originally
@@ -15,7 +15,7 @@ typeDistributionLogCovariance = ...
 costOfPublicFunds = 0;
 
 % Calculation parameters
-populationSize = 10^6;
+populationSize = 10^5;
 
 CalculationParametersEquilibrium.behavioralAgents = 0.01;
 CalculationParametersEquilibrium.fudge            = 1e-6;
@@ -39,31 +39,39 @@ moralHazardLogVariance{2} = 0.98;
 % Loop
 nSimulations = length(modelName);
 
-poolObject = parpool(nSimulations);
+poolObject = parpool(10);
 
-parfor i = 1 : nSimulations
+for i = 1 : nSimulations
     innerTypeDistributionLogCovariance = typeDistributionLogCovariance;
 
     innerTypeDistributionLogCovariance(2, 2) = moralHazardLogVariance{i};
-    Model = healthcaralognormalmodel(slopeVector{i}, typeDistributionMean, innerTypeDistributionLogCovariance);
+    Model(i) = healthcaralognormalmodel(slopeVector{i}, typeDistributionMean, innerTypeDistributionLogCovariance);
     
-    Population = population(Model, populationSize);
+    Population(i) = population(Model(i), populationSize, 10);
+end
 
+delete(poolObject);
+poolObject = parpool(2);
+
+
+parfor i = 1 : nSimulations
+    
     [pEquilibrium, DEquilibrium, ACEquilibrium, ComputationOutputEquilibrium] = ...
-            Population.findequilibrium(CalculationParametersEquilibrium);
-    WEquilibrium = Population.welfare(pEquilibrium, ...
+            Population(i).findequilibrium(CalculationParametersEquilibrium);
+    WEquilibrium = Population(i).welfare(pEquilibrium, ...
                                           costOfPublicFunds);
     
     [pEfficient, PiEfficient, ComputationOutputEfficient] = ...
-            findefficient(Population, CalculationParametersOptimum);
-    DEfficient = Population.demand(pEfficient);
+            findefficient(Population(i), CalculationParametersOptimum);
+    DEfficient = Population(i).demand(pEfficient);
     
     i_name = modelName{i};
+    Model_i = Model(i);
     
     display(i_name);
     display(ComputationOutputEfficient);
     display(ComputationOutputEquilibrium);    
-    parsave(i_name, Model, pEquilibrium, DEquilibrium, ...
+    parsave(i_name, Model_i, pEquilibrium, DEquilibrium, ...
                 ACEquilibrium, ComputationOutputEquilibrium, ...
             WEquilibrium, pEfficient, PiEfficient, ...
             ComputationOutputEfficient, DEfficient, ...

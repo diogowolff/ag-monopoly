@@ -14,44 +14,26 @@ Contains classes with the most important functions.
 	- `healthcaralognormalmodel_nl`: subclass for the health insurance model in the paper with nonlinear contracts and lognormally distributed losses.
 - `population.m`: A population object describes the preferences of a finite number of consumers. This class has methods for finding competitive equilibria and optima.
 
-## `./figuresManuscriptCompetition`
+## `./resultsAndPlots`
 
-Generates figures and tables for the linear contracts health insurance model in the paper.
+Contains the code that runs the functions contained in /classes given the parameters specified, and plots results.
 
-- `run_directory.sh`: bash script used to run the whole folder.
 - `calculations_parallel.m`: creates the populations and runs the main calculations in parallel
-- `welfare_table.m`: prints the `.tex` tables used in the paper
-- `plot_figures.m`: plots the figures. Uses `plotFunctions/plotEquilibriumAndOptimum.m` as an auxiliary function for some figures.
+- `plot_equilibrium_figures.m`: plots the figures. Uses `plotFunctions/plotEquilibriumAndOptimum.m` as an auxiliary function for some figures.
+- `plot_monopolist_figures.m`: plots the figures specific to monopoly. Uses `plotFunctions/plotMonopolist.m` as an auxiliary function for some figures.
 
-## `./figuresNonLinearModel`
+## `./resultsRemoteCode`
 
-Generates figures and tables for the nonlinear contracts health insurance model in the paper.
+Contains the code from resultsAndPlots adapted to run in a machine with more cores; this isn't fully tested yet and i'm not sure if it runs faster than the former code.
+The files are all the same except for remote_code_parallel instead of calculations_parallel.
 
-- `run_directory.sh`: bash script used to run the whole folder.
-- `create_population_lognormal.m`: creates the populations in parallel. Do not forget to set the desired number of workers, this program is very CPU intensive and may take a few days if running with few cores.
-- `calculate_equilibrium_parallel.m`: runs the main calculations.
-- `prepare_figures.m`: saves the data used for the plots.
-- `plot_figures.m`: plots the figures.
-- `print*` - print tex tables and values, and some `.txt` tables with additional information.
-
-## `./tests`
-
-Test scripts and a folder containing exploratory analyses.
 
 ## `./plotFunctions`
 
 Auxiliary functions for plotting:
 
 - `num2bank.m`: Downloaded from MATLAB central and slightly modified function for formatting numbers.
-- `./export_fig`: http://www.mathworks.com/matlabcentral/fileexchange/23629-export-fig
-
-## Authors 
-
-Eduardo Azevedo and Rafael Mourão
-
-## Running
-
-Tested in a linux server, MATLAB 2014b with a parallel cluster set up. Some of the code uses KNITRO 9.1.0. If KNITRO is not installed it will probably run correctly using MATLAB's optimization functions.
+- `./export_fig`: https://github.com/altmany/export_fig
 
 ## License
 

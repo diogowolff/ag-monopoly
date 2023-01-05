@@ -12,7 +12,7 @@ for modelNameString = { ...
     
     CalculationData = load(modelNameString{1});
     plotMonopolist( ...
-        CalculationData.Model, ...
+        CalculationData.Model_i, ...
         CalculationData.pEfficient, modelNameString{1});
     
 end; 
@@ -24,10 +24,10 @@ end;
     Interval = load('interval');
     
 % Calculate necessary series
-    nContracts = Interval.Model.nContracts;
-    xGrid = zeros(1, Interval.Model.nContracts);
+    nContracts = Interval.Model_i.nContracts;
+    xGrid = zeros(1, Interval.Model_i.nContracts);
     for j = 1 : nContracts
-        xGrid(j) = Interval.Model.contracts{j}.slope;
+        xGrid(j) = Interval.Model_i.contracts{j}.slope;
     end;
 
 % Histograms
@@ -56,4 +56,3 @@ end;
        export_fig(fileName, '-transparent');
        fileName = [fileName(1: length(fileName)-4), '.eps'];
        print(fileName, '-depsc2');
-    

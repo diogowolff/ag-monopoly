@@ -22,11 +22,6 @@ Contains the code that runs the functions contained in /classes given the parame
 - `plot_equilibrium_figures.m`: plots the figures. Uses `plotFunctions/plotEquilibriumAndOptimum.m` as an auxiliary function for some figures.
 - `plot_monopolist_figures.m`: plots the figures specific to monopoly. Uses `plotFunctions/plotMonopolist.m` as an auxiliary function for some figures.
 
-## `./resultsRemoteCode`
-
-Contains the code from resultsAndPlots adapted to run in a machine with more cores; this isn't fully tested yet and i'm not sure if it runs faster than the former code.
-The files are all the same except for remote_code_parallel instead of calculations_parallel.
-
 
 ## `./plotFunctions`
 

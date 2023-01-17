@@ -81,7 +81,7 @@ figEqPrices = figure;
         axis([0,1,0,8000])
         set(gca, 'YTickLabel', num2bank(get(gca, 'YTick')));
 
-fileName = ['./figuresEquilibrium/', modelNameString, '_', 'equilibrium_prices.pdf'];        
+fileName = ['../figuresEquilibrium/', modelNameString, '_', 'equilibrium_prices.pdf'];        
 export_fig(fileName, '-transparent');
 fileName = [fileName(1: length(fileName)-4), '.eps'];
 print(fileName, '-depsc2');
@@ -111,7 +111,7 @@ figEffPrices = figure;
         axis([0,1,0,8000])
         set(gca, 'YTickLabel', num2bank(get(gca, 'YTick')));  
 
-fileName = ['./figuresEquilibrium/', modelNameString, '_', 'efficient_prices.pdf'];        
+fileName = ['../figuresEquilibrium/', modelNameString, '_', 'efficient_prices.pdf'];        
 export_fig(fileName, '-transparent');
 fileName = [fileName(1: length(fileName)-4), '.eps'];
 print(fileName, '-depsc2');
@@ -152,7 +152,7 @@ figEffnEqPrices = figure;
         axis([0,1,0,8000])
         set(gca, 'YTickLabel', num2bank(get(gca, 'YTick')));
         
-fileName = ['./figuresEquilibrium/', modelNameString, '_', 'efficient_and_equilibrium_prices.pdf'];        
+fileName = ['../figuresEquilibrium/', modelNameString, '_', 'efficient_and_equilibrium_prices.pdf'];        
 export_fig(fileName, '-transparent');
 fileName = [fileName(1: length(fileName)-4), '.eps'];
 print(fileName, '-depsc2');
@@ -182,7 +182,7 @@ figEqDemandProfile = figure;
                 axis([500,100000,10^(-6),10^(-4)])
         set(gca, 'XTickLabel', num2bank(get(gca, 'xtick')));     
         
-fileName = ['./figuresEquilibrium/', modelNameString, '_', 'equilibrium_demand_profile.pdf'];        
+fileName = ['../figuresEquilibrium/', modelNameString, '_', 'equilibrium_demand_profile.pdf'];        
 export_fig(fileName, '-transparent');
 fileName = [fileName(1: length(fileName)-4), '.eps'];
 print(fileName, '-depsc2');

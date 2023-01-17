@@ -1,9 +1,9 @@
 clear;
 close all;
-addpath('classes');
-addpath('resultsAndPlots/plotFunctions');
-addpath('plotFunctions/export_fig_updated');
+addpath('../classes');
 addpath('plotFunctions');
+addpath('../plotFunctions/export_fig_updated');
+addpath('../plotFunctions');
 rng(1);
 
 %% Individual models

@@ -1,9 +1,9 @@
 clear;
 close all;
-addpath('classes');
-addpath('resultsAndPlots/plotFunctions');
-addpath('plotFunctions/export_fig_updated');
+addpath('../classes');
 addpath('plotFunctions');
+addpath('../plotFunctions/export_fig_updated');
+addpath('./plotFunctions');
 rng(1);
 
 for modelNameString = { ...
@@ -52,7 +52,7 @@ end;
         set(findall(gcf,'type','text'),'FontSize',27);
         
    % Save
-       fileName = './figuresEquilibrium/competition_vs_monopoly_quantities.pdf';        
+       fileName = '../figuresEquilibrium/competition_vs_monopoly_quantities.pdf';        
        export_fig(fileName, '-transparent');
        fileName = [fileName(1: length(fileName)-4), '.eps'];
        print(fileName, '-depsc2');

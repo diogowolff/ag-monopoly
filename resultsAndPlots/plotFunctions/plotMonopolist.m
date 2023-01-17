@@ -66,7 +66,7 @@ figOptDemandProfile = figure;
                 axis([500,100000,10^(-6),10^(-4)])
         set(gca, 'XTickLabel', num2bank(get(gca, 'xtick')));     
         
-fileName = ['./figuresMonopolist/', modelNameString, '_', 'demand_profile.pdf'];        
+fileName = ['../figuresMonopolist/', modelNameString, '_', 'demand_profile.pdf'];        
 export_fig(fileName, '-transparent');
 fileName = [fileName(1: length(fileName)-4), '.eps'];
 print(fileName, '-depsc2');
@@ -97,7 +97,7 @@ figExclusion = figure;
                 axis([500,100000,10^(-6),10^(-4)])
         set(gca, 'XTickLabel', num2bank(get(gca, 'xtick')));     
 
-fileName = ['./figuresMonopolist/', modelNameString, '_', 'exclusion.pdf'];        
+fileName = ['../figuresMonopolist/', modelNameString, '_', 'exclusion.pdf'];        
 export_fig(fileName, '-transparent');
 fileName = [fileName(1: length(fileName)-4), '.eps'];
 print(fileName, '-depsc2');

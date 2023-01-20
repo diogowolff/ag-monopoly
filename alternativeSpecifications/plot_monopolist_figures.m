@@ -20,7 +20,7 @@ end;
 % Start
     close all;
     clear;
-    Interval = load('interval_standalone');
+    Interval = load('interval_20m'); %%%%%% This has to be changed to
     
 % Calculate necessary series
     nContracts = Interval.Model.nContracts;
@@ -31,7 +31,7 @@ end;
 
 % Histograms
     figMonopQuantities = figure;
-    set(figMonopQuantities, 'Position', [0 0 1.618.*500 500]);
+    set(figMonopQuantities, 'Position', get(0, 'Screensize'));
     set(figMonopQuantities, 'name', 'Quantities with and without a Monopoly', 'numbertitle', 'on');
     % Plot quantities
         bar(xGrid, ...

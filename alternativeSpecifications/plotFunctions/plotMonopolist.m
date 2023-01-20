@@ -43,7 +43,7 @@ end;
 minContract = min(slopeVectorMonopolist);
 
 figOptDemandProfile = figure;
-    set(figOptDemandProfile, 'Position', [0 0 1.618.*500 500]);
+    set(figOptDemandProfile, 'Position', get(0, 'Screensize'));
     set(figOptDemandProfile, 'name', 'Profit-maximizing Demand Profile', 'numbertitle', 'on');
     % Plot scatter
         scatter(meanLossTypeVector(1:nPopulationDemandProfile), ...
@@ -75,7 +75,7 @@ exclusionVector = slopeVectorMonopolist;
 exclusionVector(exclusionVector>0) = [1];
 
 figExclusion = figure;
-    set(figExclusion, 'Position', [0 0 1.618.*500 500]);
+    set(figExclusion, 'Position', get(0, 'Screensize'));
     set(figExclusion, 'name', 'Profit-maximizing Exclusion Region', 'numbertitle', 'on');
     % Plot scatter
         gscatter(meanLossTypeVector(1:nPopulationDemandProfile), ...

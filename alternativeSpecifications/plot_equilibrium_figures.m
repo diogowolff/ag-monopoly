@@ -8,8 +8,9 @@ rng(1);
 
 %% Individual models
 for modelNameString = { ...
-        'interval',                  ...  %%%%% This has to be changed depended on which specification
-        'interval_high_mh_variance'};
+        'interval_10_mh_variance' 
+        %%%%% This has to be changed depended on which specification
+         };
     
     CalculationData = load(modelNameString{1});
     plotEquilibriumAndOptimum( ...

@@ -58,7 +58,7 @@ end;
 
 % Equilibrium and optimum
 figEqPrices = figure;
-    set(figEqPrices, 'Position', [0 0 1.618.*500 500]);
+    set(figEqPrices, 'Position', get(0, 'Screensize'));
     set(figEqPrices, 'name', 'Equilibrium Price and Mean Loss', 'numbertitle', 'on');
     % Plot prices
         plot(xGrid, pEquilibrium, 'k', 'linewidth', 3);
@@ -88,7 +88,7 @@ print(fileName, '-depsc2');
         
         
 figEffPrices = figure;
-    set(figEffPrices, 'Position', [0 0 1.618.*500 500]);
+    set(figEffPrices, 'Position', get(0, 'Screensize'));
     set(figEffPrices, 'name', 'Optimum Price and Mean Loss', 'numbertitle', 'on');
     % Plot prices
         plot(xGrid, pEfficient, 'k', 'linewidth', 3);
@@ -117,7 +117,7 @@ fileName = [fileName(1: length(fileName)-4), '.eps'];
 print(fileName, '-depsc2');
 
 figEffnEqPrices = figure;
-    set(figEffnEqPrices, 'Position', [0 0 1.618.*500 500]);
+    set(figEffnEqPrices, 'Position', get(0, 'Screensize'));
     set(figEffnEqPrices, 'name', 'Optimum and Equilibrium Price and Mean Loss', 'numbertitle', 'on');
     % Equilibrium
     % Plot prices
@@ -159,7 +159,7 @@ print(fileName, '-depsc2');
 
 % Equilibrium demand profile
 figEqDemandProfile = figure;
-    set(figEqDemandProfile, 'Position', [0 0 1.618.*500 500]);
+    set(figEqDemandProfile, 'Position', get(0, 'Screensize'));
     set(figEqDemandProfile, 'name', 'Equilibrium Demand Profile', 'numbertitle', 'on');
     % Plot scatter
         scatter(meanLossTypeVector(1:nPopulationDemandProfile), ...

@@ -78,7 +78,7 @@ figEqPrices = figure;
         set(gca,'FontSize',27);
         set(findall(gcf,'type','text'),'FontSize',27);
    % Financial tick label
-        axis([0,1,0,8000])
+        axis([0,1,0,12000])
         set(gca, 'YTickLabel', num2bank(get(gca, 'YTick')));
 
 fileName = ['../figuresAlternative/', modelNameString, '_', 'equilibrium_prices.pdf'];        
@@ -108,7 +108,7 @@ figEffPrices = figure;
         set(gca,'FontSize',27);
         set(findall(gcf,'type','text'),'FontSize',27);
    % Financial tick label
-        axis([0,1,0,8000])
+        axis([0,1,0,12000])
         set(gca, 'YTickLabel', num2bank(get(gca, 'YTick')));  
 
 fileName = ['../figuresAlternative/', modelNameString, '_', 'efficient_prices.pdf'];        
@@ -149,7 +149,7 @@ figEffnEqPrices = figure;
         set(gca,'FontSize',27);
         set(findall(gcf,'type','text'),'FontSize',27);
    % Financial tick label
-        axis([0,1,0,8000])
+        axis([0,1,0,12000])
         set(gca, 'YTickLabel', num2bank(get(gca, 'YTick')));
         
 fileName = ['../figuresAlternative/', modelNameString, '_', 'efficient_and_equilibrium_prices.pdf'];        

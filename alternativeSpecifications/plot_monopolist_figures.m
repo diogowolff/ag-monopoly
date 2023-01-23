@@ -7,7 +7,7 @@ addpath('./plotFunctions');
 rng(1);
 
 for modelNameString = { ...
-        'interval_100_mh_variance'} %%%%% This has to be changed depended on which specification
+        'interval_20m'} %%%%% This has to be changed depended on which specification
     
     CalculationData = load(modelNameString{1});
     plotMonopolist( ...
@@ -20,7 +20,7 @@ end;
 % Start
     close all;
     clear;
-    Interval = load('interval_100_mh_variance'); %%%%%% This has to be changed to
+    Interval = load('interval_20m'); %%%%%% This has to be changed to
     
 % Calculate necessary series
     nContracts = Interval.Model.nContracts;

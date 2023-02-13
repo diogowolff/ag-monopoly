@@ -351,6 +351,131 @@ classdef population
             ComputationOutput.runTime     = toc;
         end
         
+        function [p, W, ComputationOutput] = findwelfaremax(Population, costOfPublicFunds, CalculationParameters, startingPrice)
+            tic;
+            % findefficient: This function finds an efficient allocation
+            % given a cost of public funds. Inputs a population, cost of
+            % public funds, and calculation parameters. 
+            %
+            % Parameters:
+            % structures with fields .tolerance and .maxIterations, and
+            % optional fields knitro ('true' or 'false') and
+            % knitroMultistartN (integer) for a second round optimization
+            % with several starting points. For now, the algorithm only
+            % works with knitro 9.1, reverting to fmincon if knitro 9.1+ is not found.
+            %
+            % Outputs:
+            % prices, welfare, and a ComputationOutput struct with
+            % fields .nIterations, .error (in % terms vis a vis last
+            % iteration), and .runTime. 
+            %
+            % The algorithm is designed to work with ordered sets of
+            % contracts. Each iteration loops over all contracts. It tries
+            % to maximize the price difference between contract j and j+1
+            % while keeping fixed the relative prices of contracts below j
+            % and above j+1. So the numerical method is similar to the
+            % perturbation proof approach in Saez (2002).
+            
+            % Calculate maximum and minimum marginal utility.
+            MU = diff(Population.uMatrix, 1, 2);
+            
+            % Use this to create upper and lower bound for derivatives and initial condition.
+            dp_max = max(MU);
+            lower_bound = dp_max .* 0;
+            upper_bound = dp_max .* 1.2;
+            
+            % Set initial condition
+            if nargin == 4
+                dp0 = diff(startingPrice);
+                dp0 = min(dp0, upper_bound);
+                dp0 = max(dp0, lower_bound);
+            elseif nargin == 3
+                dp0 = (lower_bound+upper_bound)/2;
+            end;
+            
+            % Define function that turns dp into p, function that evaluates
+            % -welfare given dp (the difference vector of p), and function that updates the ith
+            % coordinate if dp (so that we can choose each dp(j) at a time to maximize welfare).
+            integratedp = @(dp) cumsum([0, dp]);
+            f = @(dp)  -Population.welfare(integratedp(dp), costOfPublicFunds);
+            function dpOut = dp_update(dpjIn, jIn, dpIn)
+                dpOut      = dpIn;
+                dpOut(jIn) = dpjIn;
+            end
+            
+            
+            % Initialize loop variables
+            nIterations = 0;
+            error = Inf;
+            W0 = Inf;
+            dp = dp0;
+            
+            % Update calculation parameters to default of knitro off if
+            % necessary
+            if (~isfield(CalculationParameters, 'knitro'))
+                CalculationParameters.knitro = 'false';
+            elseif (~isfield(CalculationParameters, 'knitroMultistartN'))
+                CalculationParameters.knitroMultistartN = 0;
+            end
+            
+            % Main loop with the careful optimization a la Saez.
+            while (nIterations < CalculationParameters.maxIterations) ...
+                    && (error > CalculationParameters.tolerance)
+                % Update each dp(j) maximizing as in the Saez (2002) perturbation.
+                for j = 1 : length(dp)
+                    g = @(dpj) f( dp_update(dpj,j,dp) );
+                    [dpj, W] = fminbnd(g, lower_bound(j), upper_bound(j));
+                    dp(j) = dpj;
+                end;
+
+                % Update iteration, error, and improvement in welfare.
+                nIterations = nIterations + 1;
+                if nIterations > 50 % Guarantee that at least 50 iterations are done.
+                    error = norm(W-W0) ./ norm(W);
+                end;
+                W0 = W;
+            end;
+
+            % Now do a round of knitro if the knitro option is on.
+            if (strcmp(CalculationParameters.knitro, 'true'))
+                fprintf('Doing a last round of optimization with knitro.');               
+                if (exist('knitromatlab', 'file'))
+                    [dp, W] = knitromatlab(f, dp, [], [], [], [], lower_bound, upper_bound);
+                    if CalculationParameters.knitroMultistartN > 0;
+                        % Generating random-named Knitro options file with 
+                        % multi-start options
+                        knitrofile = ['knitro_' num2str(randi(1e6)) '.opt'];
+                        fid = fopen(knitrofile,'w+');
+                        fprintf(fid,'ms_enable 1\n');
+                        fprintf(fid,'ms_maxsolves %d\n',CalculationParameters.knitroMultistartN);
+                        fprintf(fid,'hessopt 2');
+                        fclose(fid);
+                        [dp2, W2] = knitromatlab(f, dp, [], [], [], [], lower_bound, upper_bound,[],[],[],knitrofile);
+                        delete(knitrofile)
+                        if W2 < W
+                            W = W2;
+                            dp = dp2;
+                        end
+                    end
+                else
+                    display('Warning: knitromatlab not found. Doing the last round of optimization with fmincon.');
+                    [dp2, W2] = fmincon(f, dp, [], [], [], [], lower_bound, upper_bound);
+                    if W2 < W
+                            W = W2;
+                            dp = dp2;
+                    end
+                end;
+                fprintf('knitro round got welfare from %f to %f.\n', -W0, -W);
+            end;            
+            
+            p = integratedp(dp);
+            W = -W;
+            
+            ComputationOutput.nIterations = nIterations;
+            ComputationOutput.error       = error;
+            ComputationOutput.runTime     = toc;
+        end
+        
         % Graphing methods
         function graphHandle = graphEFC(Population)
             % graphEFC: This function plots graphs similar to the Einav

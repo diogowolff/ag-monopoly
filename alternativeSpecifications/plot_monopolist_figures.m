@@ -20,7 +20,7 @@ end;
 % Start
     close all;
     clear;
-    Interval = load('interval_20m'); %%%%%% This has to be changed to
+    Interval = load('interval_40m'); %%%%%% This has to be changed too
     
 % Calculate necessary series
     nContracts = Interval.Model.nContracts;

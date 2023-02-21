@@ -353,9 +353,11 @@ classdef population
         
         function [p, W, ComputationOutput] = findwelfaremax(Population, costOfPublicFunds, CalculationParameters, startingPrice)
             tic;
-            % findefficient: This function finds an efficient allocation
+            % findwelfaremax: This function finds an efficient allocation
             % given a cost of public funds. Inputs a population, cost of
             % public funds, and calculation parameters. 
+            %
+            % THIS IS THE ORIGINAL FINDEFFICIENT
             %
             % Parameters:
             % structures with fields .tolerance and .maxIterations, and

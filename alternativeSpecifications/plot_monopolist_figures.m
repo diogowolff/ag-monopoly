@@ -7,7 +7,7 @@ addpath('./plotFunctions');
 rng(1);
 
 for modelNameString = { ...
-        'interval_20m'} %%%%% This has to be changed depended on which specification
+        'interval_40m'} %%%%% This has to be changed depended on which specification
     
     CalculationData = load(modelNameString{1});
     plotMonopolist( ...

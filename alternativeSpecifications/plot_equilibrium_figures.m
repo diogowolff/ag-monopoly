@@ -8,7 +8,7 @@ rng(1);
 
 %% Individual models
 for modelNameString = { ...
-        'interval_10_mh_mean' 
+        'interval_40m' 
         %%%%% This has to be changed depended on which specification
          };
     

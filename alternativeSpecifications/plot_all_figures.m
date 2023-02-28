@@ -6,7 +6,7 @@ addpath('../plotFunctions/export_fig_updated');
 addpath('../plotFunctions');
 rng(1);
 
-modelNameString = 'interval_40m'; %% This has to be changed depended on which specification
+modelNameString = 'interval_more_contracts'; %% This has to be changed depended on which specification
     
 %CalculationData = load(modelNameString{1});
 %plotMonopolist( ...
@@ -47,7 +47,7 @@ modelNameString = 'interval_40m'; %% This has to be changed depended on which sp
         set(findall(gcf,'type','text'),'FontSize',27);
         
    % Save
-       fileName = '../figures40m/competition_vs_monopoly_quantities_40m.pdf';        
+       fileName = '../figures40m/competition_vs_monopoly_quantities_more_contracts.pdf';        
        export_fig(fileName, '-transparent');
        fileName = [fileName(1: length(fileName)-4), '.eps'];
        print(fileName, '-depsc2');
@@ -83,7 +83,7 @@ modelNameString = 'interval_40m'; %% This has to be changed depended on which sp
         set(findall(gcf,'type','text'),'FontSize',27);
         
    % Save
-       fileName = '../figures40m/welfare_vs_monopoly_quantities_40m.pdf';        
+       fileName = '../figures40m/welfare_vs_monopoly_quantities_more_contracts.pdf';        
        export_fig(fileName, '-transparent');
        fileName = [fileName(1: length(fileName)-4), '.eps'];
        print(fileName, '-depsc2');
@@ -225,13 +225,13 @@ print(fileName, '-depsc2');
 
 %% Table of exclusion and percentiles
 
-clear;
-modelNameString = 'interval_40m';
-load(modelNameString);
-
-table = [DEquilibrium(1), sum(DEquilibrium(19:26)), sum(DEquilibrium(21:26)), ...
-    sum(DEquilibrium(24:26)); DEfficient(1), sum(DEfficient(19:26)), ...
-    sum(DEfficient(21:26)), sum(DEfficient(24:26)); DWelfare(1), ...
-    sum(DWelfare(19:26)), sum(DWelfare(21:26)), sum(DWelfare(24:26))];
-
-save('tails_of_insurance_levels.mat', 'table');
+% clear;
+% modelNameString = 'interval_more_contracts';
+% load(modelNameString);
+% 
+% table = [DEquilibrium(1), sum(DEquilibrium(19:26)), sum(DEquilibrium(21:26)), ...
+%     sum(DEquilibrium(24:26)); DEfficient(1), sum(DEfficient(19:26)), ...
+%     sum(DEfficient(21:26)), sum(DEfficient(24:26)); DWelfare(1), ...
+%     sum(DWelfare(19:26)), sum(DWelfare(21:26)), sum(DWelfare(24:26))];
+% 
+% save('tails_of_insurance_levels_more.mat', 'table');

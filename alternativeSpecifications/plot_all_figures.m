@@ -6,16 +6,12 @@ addpath('../plotFunctions/export_fig_updated');
 addpath('../plotFunctions');
 rng(1);
 
-modelNameString = 'interval_more_contracts'; %% This has to be changed depended on which specification
-    
-%CalculationData = load(modelNameString{1});
-%plotMonopolist( ...
-%    CalculationData.Model, ...
-%    CalculationData.pEfficient, modelNameString{1});
 
 %% Competitive equilibrium vs monopoly histogram
 
 % Start
+    modelNameString = 'interval_more_contracts';
+    
     Interval = load(modelNameString); %%%%%% This has to be changed too
     
 % Calculate necessary series

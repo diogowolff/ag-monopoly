@@ -1,7 +1,7 @@
-classdef healthcaralognormalmodel_lognorm < model
-    %healthcaralognormalmodel_lognorm Creates a health insurance model as in
+classdef healthcaralognormalmodel_censnorm < model
+    %healthcaralognormalmodel_censnorm Creates a health insurance model as in
     %the Azevedo and Gottlieb paper. Subclass of the model class.
-    %   This models have CARA preferences, lognormal losses, linear contracts,
+    %   This models have CARA preferences, truncated normal losses, linear contracts,
     %   and lognormally distributed types. Inputs to the constructor:
     %   slopeVector is a vector of contract slopes, parameterMean is a 4
     %   dimensional vector of means of parameters and parameterLogVariance
@@ -33,54 +33,26 @@ classdef healthcaralognormalmodel_lognorm < model
         
         function x = lossPDF(~, type, l)
             % Probability distribution function for the losses
-            sigma = sqrt( log( 1 + (type.S./type.M).^2 ) );
-            mu    = log(type.M) - sigma.^2 / 2;
-            x = lognpdf(l, mu, sigma);
+            qsi = (l-type.M)./type.S;
+            alpha = -type.M./type.S;
+            
+            x = normpdf(qsi)./(type.S.*(1 - normcdf(alpha)));
         end
         
         function x = lossCDF(~, type, l)
             % Cumulative distribution function for the losses
-            sigma = sqrt( log( 1 + (type.S./type.M).^2 ) );
-            mu    = log(type.M) - sigma.^2 / 2;
-            x = logncdf(l, mu, sigma);
+            qsi = (l-type.M)./type.S;
+            alpha = -type.M./type.S;
+            
+            x = (normcdf(qsi) - normcdf(alpha))./(1 - normcdf(alpha));
         end
         
         function u = uFunction(obj, contract, type)
             % Returns the willingness to pay of an agent for a contract,
-            % considering the outside option of public insurance.
-            
-            
-            if (type.A > 0)
-                
-                u = logExpectedExponentialValue( obj, @(l) -type.A*...
-                    exPostUtility(obj, contract, type, l),  contract, type );
-                
-                u0 = logExpectedExponentialValue( obj, @(l) -type.A*...
-                    exPostUtility(obj, obj.nullContract, type, l), ...
-                    obj.nullContract, type );
-                
-                u = - u / type.A;
-                u0 = - u0 / type.A;
-                
-            else % If there is no risk aversion, just calculate the 
-                 %  expected ex post utility
+            % No outside option in this case
                 
                 u = expectedValue( obj, @(l) ...
                     exPostUtility(obj, contract, type, l),  contract, type );
-                
-                u0 = expectedValue( obj, @(l) ...
-                    exPostUtility(obj, obj.nullContract, type, l), ...
-                    obj.nullContract, type );
-                
-            end
-            
-            if ( (u0 - u)/abs(u) > 1e-6 )
-                fprintf('Utility with insurance: %.8f\n',u)
-                fprintf('Utility without insurance: %.8f\n',u0)
-                error('Utility without insurance cannot be higher than with it')
-            end
-            
-            u  = u - u0;
             
         end
             
@@ -214,30 +186,6 @@ classdef healthcaralognormalmodel_lognorm < model
     
     methods ( Access = private, Hidden = true ) % Auxiliary methods
         
-        function x = logExpectedExponentialValue(obj, function_handle, contract, type )
-            
-            [limits, oopMaxLoss] = integralLimits(obj, contract, type);
-            
-            if ( limits(1) ~= limits(2) )
-                [~, K] = fminbnd(@(l) - log( lossPDF(obj, type, l) )...
-                    - function_handle(l), limits(1), limits(2) );
-                K = -K;
-            else
-                K = 0;
-            end
-            
-            x = leftIntegral(obj,  @(l) exp( function_handle(l) - K ), ...
-                contract, type, limits );
-            
-            x = x + innerIntegral (obj, @(l) exp( log( lossPDF(obj, type, l) ) ...
-                + function_handle(l) - K), contract, type, limits, oopMaxLoss );
-            
-            x = x + rightIntegral( obj,@(l) exp( function_handle(l) - K ),...
-                contract, type, limits, oopMaxLoss );
-            
-            x = log(x) + K;
-            
-        end
         
         function x = expectedValue(obj, function_handle, contract, type )
             

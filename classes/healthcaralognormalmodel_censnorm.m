@@ -113,10 +113,23 @@ classdef healthcaralognormalmodel_censnorm < model
         
         function cost = exPostCost(obj, contract, type, losses)
             
-                [~, expenditure, payment] = exPostUtility(obj, contract, type, losses);
-                cost = expenditure - payment;
+                [~, expenditure] = exPostUtility(obj, contract, type, losses);
+                cost = contract.slope*expenditure;
             
         end
+        
+        function [u, expenditure] = exPostUtility(obj, contract, type, losses)
+            
+            % Initializing variables
+            u = zeros(1, length(losses));
+            expenditure = zeros(1, length(losses));
+            
+            for i = 1:length(losses)
+               u(i) = type.H/2*contract.slope^2 + losses(i)*(contract.slope -1); %????
+               expenditure(i) = losses(i) + type.H*contract.slope; 
+            end
+        end
+        
         
         function [u, expenditure, payment, bounds] = exPostUtility(obj, contract, type, losses)
             
@@ -254,16 +267,8 @@ classdef healthcaralognormalmodel_censnorm < model
         function [limits, oopMaxLoss] = integralLimits(obj, contract, type)
             
             [~, ~, ~, bounds] = exPostUtility(obj, contract, type, 0);
-            oopMaxLoss = max(bounds(1),bounds(3));
             
-            if (lossPDF(obj,type,0) > 0);
                 limits(1) = 0;
-            elseif ( (type.M > oopMaxLoss ) && ...
-                    lossPDF(obj, type, oopMaxLoss) == 0)
-                limits(1) = oopMaxLoss;
-            else
-                limits(1) = max(0,findCloserNonZero(min(type.M,oopMaxLoss),type.M/100,1e-10));
-            end
             
             if (lossPDF(obj,type,oopMaxLoss) > 0);
                 limits(2) = oopMaxLoss;

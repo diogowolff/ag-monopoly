@@ -41,12 +41,11 @@ rng(1);
         box off;
         set(gca,'FontSize',27);
         set(findall(gcf,'type','text'),'FontSize',27);
+        set(gcf,'PaperPositionMode','auto')
         
    % Save
-       fileName = '../figures40m/competition_vs_monopoly_quantities_more_contracts.pdf';        
-       export_fig(fileName, '-transparent');
-       fileName = [fileName(1: length(fileName)-4), '.eps'];
-       print(fileName, '-depsc2');
+       fileName = '../figuresMoreContracts/competition_vs_monopoly_quantities_more_contracts';        
+       print(figMonopQuantities,fileName,'-dpng')
     
 %% Surplus-maximizing and monopoly histogram
 
@@ -79,10 +78,8 @@ rng(1);
         set(findall(gcf,'type','text'),'FontSize',27);
         
    % Save
-       fileName = '../figures40m/welfare_vs_monopoly_quantities_more_contracts.pdf';        
-       export_fig(fileName, '-transparent');
-       fileName = [fileName(1: length(fileName)-4), '.eps'];
-       print(fileName, '-depsc2');
+       fileName = '../figuresMoreContracts/welfare_vs_monopoly_quantities_more_contracts';        
+       print(figSurplusQuantities,fileName,'-dpng')
     
 %% Monopoloy and equilibrium prices
 
@@ -161,10 +158,8 @@ figEffnEqPrices = figure;
         axis([0,1,0,max(Interval.pEfficient)])
         set(gca, 'YTickLabel', num2bank(get(gca, 'YTick')));
         
-fileName = ['../figures40m/', modelNameString, '_', 'monopoly_and_equilibrium_prices.pdf'];        
-export_fig(fileName, '-transparent');
-fileName = [fileName(1: length(fileName)-4), '.eps'];
-print(fileName, '-depsc2');
+fileName = ['../figuresMoreContracts/', modelNameString, '_', 'monopoly_and_equilibrium_prices'];        
+print(figEffnEqPrices,fileName,'-dpng')
 
 
 %% Exclusion region
@@ -213,21 +208,19 @@ figExclusion = figure;
                 axis([500,100000,10^(-6),10^(-4)])
         set(gca, 'XTickLabel', num2bank(get(gca, 'xtick')));     
 
-fileName = ['../figures40m/', modelNameString, '_', 'exclusion.pdf'];        
-export_fig(fileName, '-transparent');
-fileName = [fileName(1: length(fileName)-4), '.eps'];
-print(fileName, '-depsc2');
+fileName = ['../figuresMoreContracts/', modelNameString, '_', 'exclusion'];        
+print(figExclusion,fileName,'-dpng')
 
 
 %% Table of exclusion and percentiles
 
-% clear;
-% modelNameString = 'interval_more_contracts';
-% load(modelNameString);
-% 
-% table = [DEquilibrium(1), sum(DEquilibrium(19:26)), sum(DEquilibrium(21:26)), ...
-%     sum(DEquilibrium(24:26)); DEfficient(1), sum(DEfficient(19:26)), ...
-%     sum(DEfficient(21:26)), sum(DEfficient(24:26)); DWelfare(1), ...
-%     sum(DWelfare(19:26)), sum(DWelfare(21:26)), sum(DWelfare(24:26))];
-% 
-% save('tails_of_insurance_levels_more.mat', 'table');
+clear;
+modelNameString = 'interval_more_contracts';
+load(modelNameString);
+
+table = [DEquilibrium(1), sum(DEquilibrium(71:101)), sum(DEquilibrium(81:101)), ...
+    sum(DEquilibrium(91:101)); DEfficient(1), sum(DEfficient(71:101)), ...
+    sum(DEfficient(81:101)), sum(DEfficient(91:101)); DWelfare(1), ...
+    sum(DWelfare(71:101)), sum(DWelfare(81:101)), sum(DWelfare(91:101))];
+
+save('tails_of_insurance_levels_more.mat', 'table');

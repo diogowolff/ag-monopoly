@@ -3,7 +3,7 @@ addpath('../classes');
 rng(1);
 
 % Input model parameters
-meanS = sqrt(25000^2 - 5100^2);
+meanS = sqrt(2500^2 - 510^2);
 typeDistributionMean = ...
     [1*10^(-5), 1330, 4340, meanS]; % Original A was 1.9*10^-3
 typeDistributionLogCovariance = ...
@@ -15,7 +15,7 @@ typeDistributionLogCovariance = ...
 costOfPublicFunds = 0;
 
 % Calculation parameters
-populationSize = 5*10^2;
+populationSize = 5*10^3;
 
 CalculationParametersEquilibrium.behavioralAgents = 0.01;
 CalculationParametersEquilibrium.fudge            = 1e-6;
@@ -28,8 +28,8 @@ CalculationParametersOptimum.knitro               = 'true';
 CalculationParametersOptimum.knitroMultistartN    = 300;
 
 % List of models
-modelName{1}              = 'interval_test';
-slopeVector{1}            = 0:0.04:1;
+modelName{1}              = 'interval_censnorm';
+slopeVector{1}            = 0:0.01:1;
 moralHazardLogVariance{1} = 0.28;
 
 % Loop
@@ -39,7 +39,7 @@ for i = 1 : nSimulations
     innerTypeDistributionLogCovariance = typeDistributionLogCovariance;
 
     innerTypeDistributionLogCovariance(2, 2) = moralHazardLogVariance{i};
-    Model = healthcaralognormalmodel(slopeVector{i}, typeDistributionMean, innerTypeDistributionLogCovariance);
+    Model = healthcaralognormalmodel_censnorm(slopeVector{i}, typeDistributionMean, innerTypeDistributionLogCovariance);
     
     Population = population(Model, populationSize);
 

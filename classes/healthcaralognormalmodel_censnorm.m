@@ -16,7 +16,7 @@ classdef healthcaralognormalmodel_censnorm < model
     
     methods
         % Constructor
-        function Model = healthcaralognormalmodel(slopeVector, ...
+        function Model = healthcaralognormalmodel_censnorm(slopeVector, ...
                 typeDistributionMean, typeDistributionLogCovariance)
             
             Model.typeDistributionMean = typeDistributionMean;
@@ -32,13 +32,23 @@ classdef healthcaralognormalmodel_censnorm < model
         end
             
         function u = uFunction(~, x, type)
-                u = x.slope .* type.M ...
-                + (x.slope.^2) .* 0.5 .* type.H ...
-                + 0.5 .* x.slope .* (2-x.slope) .* (type.S.^2) .* type.A;
+                alpha = -type.M./type.S;
+
+                left_expec = exp(type.M.*type.A + (type.A .* type.S).^2 ./ 2) .* ...
+                    (1 - normcdf(alpha - type.S .* type.A))./(1 - normcdf(alpha));
+
+                right_expec = exp(type.M.*type.A.*(1-x.slope) + (type.A .* type.S .* (1-x.slope)).^2 ./ 2) .* ...
+                    (1 - normcdf(alpha - type.S .* type.A .* (1-x.slope)))./(1 - normcdf(alpha));
+
+
+                u = (log(left_expec) - log(right_expec))./type.A + ...
+                 (x.slope.^2) .* 0.5 .* type.H;
         end
         
         function c = cFunction(~, x, type)
-                c = x.slope .* type.M ...
+                alpha = -type.M./type.S;
+
+                c = x.slope .* (type.M + normpdf(alpha)./(1-normcdf(alpha)) .* type.S) ...
                 + (x.slope.^2) .* type.H;
         end
         

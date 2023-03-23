@@ -3,15 +3,19 @@ addpath('../classes');
 rng(1);
 
 % Input model parameters
-meanS = sqrt(2500^2 - 510^2);
+meanS = sqrt(25000^2 - 5100^2);
 
-F = @(x) [4340 - x(1) - normpdf(-x(1)/x(2))/(1-normcdf(-x(1)/x(2)))*x(2);
-    meanS - x(2)^2*(1 - x(1)/x(2)*normpdf(-x(1)/x(2))/(1-normcdf(-x(1)/x(2))) - ...
-    (normpdf(-x(1)/x(2))/(1-normcdf(-x(1)/x(2))))^2)];
+F = @(x) [4340 - x(1)^2 - normpdf(-x(1)^2/x(2))/(1-normcdf(-x(1)^2/x(2)))*x(2);
+    meanS^2 - x(2)^2*(1 - x(1)^2/x(2)*normpdf(-x(1)^2/x(2))/(1-normcdf(-x(1)^2/x(2))) - ...
+    (normpdf(-x(1)^2/x(2))/(1-normcdf(-x(1)^2/x(2))))^2)];
 
 x0 = [2000; 20000];
 
-[x,fval] = fsolve(F,x0);
+options = optimoptions('fsolve','Display','iter');
+
+[x,fval] = fsolve(F,x0, options);
+
+disp(x);
 
 typeDistributionMean = ...
     [1*10^(-5), 1330, x(1), x(2)]; % Original A was 1.9*10^-3
@@ -37,7 +41,7 @@ CalculationParametersOptimum.knitro               = 'true';
 CalculationParametersOptimum.knitroMultistartN    = 300;
 
 % List of models
-modelName{1}              = 'interval_censnormv3';
+modelName{1}              = 'interval_censnormv4';
 slopeVector{1}            = 0:0.01:1;
 moralHazardLogVariance{1} = 0.28;
 
@@ -60,6 +64,10 @@ for i = 1 : nSimulations
     [pEfficient, PiEfficient, ComputationOutputEfficient] = ...
             findefficient(Population, CalculationParametersOptimum);
     DEfficient = Population.demand(pEfficient);
+
+    [pWelfare, WWelfare, ComputationOutputWelfare] = ...
+            findwelfaremax(Population, costOfPublicFunds, CalculationParametersOptimum);
+    DWelfare = Population.demand(pWelfare);
     
     i_name = modelName{i};
     
@@ -70,6 +78,8 @@ for i = 1 : nSimulations
                 ACEquilibrium, ComputationOutputEquilibrium, ...
             WEquilibrium, pEfficient, PiEfficient, ...
             ComputationOutputEfficient, DEfficient, ...
+            pWelfare, WWelfare, ComputationOutputWelfare, ...
+            DWelfare, ...
             CalculationParametersEquilibrium, CalculationParametersOptimum, ...
             populationSize)
 

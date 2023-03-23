@@ -10,7 +10,7 @@ rng(1);
 %% Competitive equilibrium vs monopoly histogram
 
 % Start
-    modelNameString = 'interval_more_contracts';
+    modelNameString = 'interval_censnormv4';
     
     Interval = load(modelNameString); %%%%%% This has to be changed too
     
@@ -44,43 +44,44 @@ rng(1);
         set(gcf,'PaperPositionMode','auto')
         
    % Save
-       fileName = '../figuresMoreContracts/competition_vs_monopoly_quantities_more_contracts';        
+
+       fileName = ['../figuresMoreContracts/competition_vs_monopoly_quantities', modelNameString];        
        print(figMonopQuantities,fileName,'-dpng')
     
 %% Surplus-maximizing and monopoly histogram
-
+% 
 % Calculate necessary series
-    nContracts = Interval.Model.nContracts;
-    xGrid = zeros(1, Interval.Model.nContracts);
-    for j = 1 : nContracts
-        xGrid(j) = Interval.Model.contracts{j}.slope;
-    end;
-
+%     nContracts = Interval.Model.nContracts;
+%     xGrid = zeros(1, Interval.Model.nContracts);
+%     for j = 1 : nContracts
+%         xGrid(j) = Interval.Model.contracts{j}.slope;
+%     end;
+% 
 % Histograms
-    figSurplusQuantities = figure;
-    set(figSurplusQuantities, 'Position', get(0, 'Screensize'));
-    set(figSurplusQuantities, 'name', 'Surplus-maximizing and monopoly quantities', 'numbertitle', 'on');
-    % Plot quantities
-        bar(xGrid, ...
-            nContracts .* ...
-            [Interval.DWelfare; ...
-            Interval.DEfficient]', 3);
-        hold on;
-        % axis([0, 1, 0, .1 .* nContracts]);
-    % Labels
-        legend('Maximum Surplus', 'Monopoly', 'Location', 'NorthEast');
-        legend boxoff
-        xlabel('Coverage');
-        ylabel('(Density)');
-   % Other options
-        box off;
-        set(gca,'FontSize',27);
-        set(findall(gcf,'type','text'),'FontSize',27);
-        
-   % Save
-       fileName = '../figuresMoreContracts/welfare_vs_monopoly_quantities_more_contracts';        
-       print(figSurplusQuantities,fileName,'-dpng')
-    
+%     figSurplusQuantities = figure;
+%     set(figSurplusQuantities, 'Position', get(0, 'Screensize'));
+%     set(figSurplusQuantities, 'name', 'Surplus-maximizing and monopoly quantities', 'numbertitle', 'on');
+%     Plot quantities
+%         bar(xGrid, ...
+%             nContracts .* ...
+%             [Interval.DWelfare; ...
+%             Interval.DEfficient]', 3);
+%         hold on;
+%         axis([0, 1, 0, .1 .* nContracts]);
+%     Labels
+%         legend('Maximum Surplus', 'Monopoly', 'Location', 'NorthEast');
+%         legend boxoff
+%         xlabel('Coverage');
+%         ylabel('(Density)');
+%    Other options
+%         box off;
+%         set(gca,'FontSize',27);
+%         set(findall(gcf,'type','text'),'FontSize',27);
+%         
+%    Save
+%        fileName = '../figuresMoreContracts/welfare_vs_monopoly_quantities_more_contracts';        
+%        print(figSurplusQuantities,fileName,'-dpng')
+%     
 %% Monopoloy and equilibrium prices
 
 % Parameters
@@ -212,15 +213,15 @@ fileName = ['../figuresMoreContracts/', modelNameString, '_', 'exclusion'];
 print(figExclusion,fileName,'-dpng')
 
 
-%% Table of exclusion and percentiles
-
-clear;
-modelNameString = 'interval_more_contracts';
-load(modelNameString);
-
-table = [DEquilibrium(1), sum(DEquilibrium(71:101)), sum(DEquilibrium(81:101)), ...
-    sum(DEquilibrium(91:101)); DEfficient(1), sum(DEfficient(71:101)), ...
-    sum(DEfficient(81:101)), sum(DEfficient(91:101)); DWelfare(1), ...
-    sum(DWelfare(71:101)), sum(DWelfare(81:101)), sum(DWelfare(91:101))];
-
-save('tails_of_insurance_levels_more.mat', 'table');
+% %% Table of exclusion and percentiles
+% 
+% clear;
+% modelNameString = 'interval_censnormv3';
+% load(modelNameString);
+% 
+% table = [DEquilibrium(1), sum(DEquilibrium(71:101)), sum(DEquilibrium(81:101)), ...
+%     sum(DEquilibrium(91:101)); DEfficient(1), sum(DEfficient(71:101)), ...
+%     sum(DEfficient(81:101)), sum(DEfficient(91:101)); DWelfare(1), ...
+%     sum(DWelfare(71:101)), sum(DWelfare(81:101)), sum(DWelfare(91:101))];
+% 
+% save('tails_server.mat', 'table');

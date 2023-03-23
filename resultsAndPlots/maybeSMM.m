@@ -24,7 +24,7 @@ typeDistributionLogCovariance = ...
 costOfPublicFunds = 0;
 
 % Calculation parameters
-populationSize = 5*10^3;
+populationSize = 5*10^2;
 slopeVector{1}            = 0:0.01:1;
 
 innerTypeDistributionLogCovariance = typeDistributionLogCovariance;

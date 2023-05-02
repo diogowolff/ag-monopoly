@@ -8,7 +8,7 @@ rng(1);
 
 %% Individual models
 for modelNameString = { ...
-        'interval_censnorm_server'};
+        'interval_censnorm_server_v2'};
     
     CalculationData = load(modelNameString{1});
     plotEquilibriumAndOptimum( ...

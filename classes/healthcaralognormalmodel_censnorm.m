@@ -12,16 +12,18 @@ classdef healthcaralognormalmodel_censnorm < model
     properties
         typeDistributionMean
         typeDistributionLogCovariance
+        lowerBound
     end
     
     methods
         % Constructor
         function Model = healthcaralognormalmodel_censnorm(slopeVector, ...
-                typeDistributionMean, typeDistributionLogCovariance)
+                typeDistributionMean, typeDistributionLogCovariance, lowerBound)
             
             Model.typeDistributionMean = typeDistributionMean;
             Model.typeDistributionLogCovariance = ...
                 typeDistributionLogCovariance;
+            Model.lowerBound = lowerBound;
             
             n = length(slopeVector);
             for i = 1:n
@@ -32,21 +34,21 @@ classdef healthcaralognormalmodel_censnorm < model
         end
             
         function u = uFunction(~, x, type)
-                alpha = -type.M./type.S;
+                alpha = (type.a-type.M)./type.S;
 
-                left_expec = exp(type.M.*type.A + (type.A .* type.S).^2 ./ 2) .* ...
-                    (1 - normcdf(alpha - type.S .* type.A))./(1 - normcdf(alpha));
+                left_term = (type.M.*type.A + (type.A .* type.S).^2 ./ 2) + ... % in some rare cases we get inf, so we substitute
+                    log((1 - normcdf(alpha - type.S .* type.A))./(1 - normcdf(alpha)));
 
-                right_expec = exp(type.M.*type.A.*(1-x.slope) + (type.A .* type.S .* (1-x.slope)).^2 ./ 2) .* ...
-                    (1 - normcdf(alpha - type.S .* type.A .* (1-x.slope)))./(1 - normcdf(alpha));
+                right_term = (type.M.*type.A.*(1-x.slope) + (type.A .* type.S .* (1-x.slope)).^2 ./ 2) + ...
+                    log((1 - normcdf(alpha - type.S .* type.A .* (1-x.slope)))./(1 - normcdf(alpha)));
 
 
-                u = (log(left_expec) - log(right_expec))./type.A + ...
+                u = (left_term - right_term)./type.A + ...
                  (x.slope.^2) .* 0.5 .* type.H;
         end
         
         function c = cFunction(~, x, type)
-                alpha = -type.M./type.S;
+                alpha = (type.a-type.M)./type.S;
 
                 c = x.slope .* (type.M + normpdf(alpha)./(1-normcdf(alpha)) .* type.S) ...
                 + (x.slope.^2) .* type.H;
@@ -63,6 +65,7 @@ classdef healthcaralognormalmodel_censnorm < model
             Type.H = v(2);
             Type.M = v(3);
             Type.S = v(4);
+            Type.a = Model.lowerBound;
         end;
         
         function [populationSize, CalculationParametersEquilibrium, CalculationParametersOptimum] = ...

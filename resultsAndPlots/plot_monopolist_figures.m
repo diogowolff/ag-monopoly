@@ -7,7 +7,7 @@ addpath('./plotFunctions');
 rng(1);
 
 for modelNameString = { ...
-        'interval_standalone'}
+        'interval_censnorm_server_v2'}
     
     CalculationData = load(modelNameString{1});
     plotMonopolist( ...

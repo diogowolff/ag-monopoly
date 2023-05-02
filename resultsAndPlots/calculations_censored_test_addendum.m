@@ -3,9 +3,9 @@ addpath('../classes');
 rng(1);
 
 % Input model parameters
-meanS = sqrt(25000^2 - 5100^2);
+
 typeDistributionMean = ...
-    [1*10^(-5), 1330, 4340, meanS]; % Original A was 1.9*10^-3
+    [1*10^(-5), 1330, 8000, 37000]; % Original A was 1.9*10^-3
 typeDistributionLogCovariance = ...
     [ 0.25 -0.01 -0.12 0    ; % c11 = 0.25 originally
      -0.01  0.28 -0.03 0    ; % c22 = 0.98 originally
@@ -15,7 +15,7 @@ typeDistributionLogCovariance = ...
 costOfPublicFunds = 0;
 
 % Calculation parameters
-populationSize = 5*10^3;
+populationSize = 2*10^4;
 
 CalculationParametersEquilibrium.behavioralAgents = 0.01;
 CalculationParametersEquilibrium.fudge            = 1e-6;
@@ -28,7 +28,7 @@ CalculationParametersOptimum.knitro               = 'true';
 CalculationParametersOptimum.knitroMultistartN    = 300;
 
 % List of models
-modelName{1}              = 'interval_test';
+modelName{1}              = 'interval_censnorm_server_just_for_averages';
 slopeVector{1}            = 0:0.04:1;
 moralHazardLogVariance{1} = 0.28;
 
@@ -39,30 +39,27 @@ for i = 1 : nSimulations
     innerTypeDistributionLogCovariance = typeDistributionLogCovariance;
 
     innerTypeDistributionLogCovariance(2, 2) = moralHazardLogVariance{i};
-    Model = healthcaralognormalmodel(slopeVector{i}, typeDistributionMean, innerTypeDistributionLogCovariance);
+    Model = healthcaralognormalmodel_censnorm(slopeVector{i}, typeDistributionMean, innerTypeDistributionLogCovariance, 0);
     
     Population = population(Model, populationSize);
-
-    [pEquilibrium, DEquilibrium, ACEquilibrium, ComputationOutputEquilibrium] = ...
-            Population.findequilibrium(CalculationParametersEquilibrium);
-    WEquilibrium = Population.welfare(pEquilibrium, ...
-                                          costOfPublicFunds);
     
-    [pEfficient, PiEfficient, ComputationOutputEfficient] = ...
-            findefficient(Population, CalculationParametersOptimum);
-    DEfficient = Population.demand(pEfficient);
+    Types = zeros(populationSize, 2);
+
+    for j=1:populationSize
+       Types(j,:) = [Population.typeList{j}.M, Population.typeList{j}.S];
+    end
+
+    simu_mean = mean(Types(:, 1) - normpdf(-Types(:, 1)./Types(:, 2))./...
+        (1-normcdf(-Types(:, 1)./Types(:, 1))).*Types(:, 1));
+
+    simu_var = mean(Types(:, 2).^2.*(1 - Types(:, 1)./Types(:, 2).*...
+        normpdf(-Types(:, 1)./Types(:, 2))./(1-normcdf(-Types(:, 1)./Types(:, 2))) - ...
+        (normpdf(-Types(:, 1)./Types(:, 2))./(1-normcdf(-Types(:, 1)./Types(:, 2)))).^2));
+
+    sqrtsim = sqrt(simu_var);
     
     i_name = modelName{i};
     
-    display(i_name);
-    display(ComputationOutputEfficient);
-    display(ComputationOutputEquilibrium);    
-    parsave(i_name, Model, pEquilibrium, DEquilibrium, ...
-                ACEquilibrium, ComputationOutputEquilibrium, ...
-            WEquilibrium, pEfficient, PiEfficient, ...
-            ComputationOutputEfficient, DEfficient, ...
-            CalculationParametersEquilibrium, CalculationParametersOptimum, ...
-            populationSize)
 
 
 end

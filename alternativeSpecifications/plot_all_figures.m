@@ -10,7 +10,7 @@ rng(1);
 %% Competitive equilibrium vs monopoly histogram
 
 % Start
-    modelNameString = 'interval_censnormv4';
+    modelNameString = 'interval_censnorm_server_v16';
     
     Interval = load(modelNameString); %%%%%% This has to be changed too
     
@@ -49,38 +49,38 @@ rng(1);
        print(figMonopQuantities,fileName,'-dpng')
     
 %% Surplus-maximizing and monopoly histogram
-% 
+ 
 % Calculate necessary series
-%     nContracts = Interval.Model.nContracts;
-%     xGrid = zeros(1, Interval.Model.nContracts);
-%     for j = 1 : nContracts
-%         xGrid(j) = Interval.Model.contracts{j}.slope;
-%     end;
+     nContracts = Interval.Model.nContracts;
+     xGrid = zeros(1, Interval.Model.nContracts);
+     for j = 1 : nContracts
+         xGrid(j) = Interval.Model.contracts{j}.slope;
+     end;
 % 
 % Histograms
-%     figSurplusQuantities = figure;
-%     set(figSurplusQuantities, 'Position', get(0, 'Screensize'));
-%     set(figSurplusQuantities, 'name', 'Surplus-maximizing and monopoly quantities', 'numbertitle', 'on');
+     figSurplusQuantities = figure;
+     set(figSurplusQuantities, 'Position', get(0, 'Screensize'));
+     set(figSurplusQuantities, 'name', 'Surplus-maximizing and monopoly quantities', 'numbertitle', 'on');
 %     Plot quantities
-%         bar(xGrid, ...
-%             nContracts .* ...
-%             [Interval.DWelfare; ...
-%             Interval.DEfficient]', 3);
-%         hold on;
-%         axis([0, 1, 0, .1 .* nContracts]);
+         bar(xGrid, ...
+             nContracts .* ...
+             [Interval.DWelfare; ...
+             Interval.DEfficient]', 3);
+         hold on;
+        % axis([0, 1, 0, .1 .* nContracts]);
 %     Labels
-%         legend('Maximum Surplus', 'Monopoly', 'Location', 'NorthEast');
-%         legend boxoff
-%         xlabel('Coverage');
-%         ylabel('(Density)');
+         legend('Maximum Surplus', 'Monopoly', 'Location', 'NorthEast');
+         legend boxoff
+         xlabel('Coverage');
+         ylabel('(Density)');
 %    Other options
-%         box off;
-%         set(gca,'FontSize',27);
-%         set(findall(gcf,'type','text'),'FontSize',27);
-%         
+         box off;
+         set(gca,'FontSize',27);
+         set(findall(gcf,'type','text'),'FontSize',27);
+         
 %    Save
-%        fileName = '../figuresMoreContracts/welfare_vs_monopoly_quantities_more_contracts';        
-%        print(figSurplusQuantities,fileName,'-dpng')
+        fileName = ['../figuresMoreContracts/competition_vs_surplus_quantities', modelNameString];        
+       print(figSurplusQuantities,fileName,'-dpng')
 %     
 %% Monopoloy and equilibrium prices
 

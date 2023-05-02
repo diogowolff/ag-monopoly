@@ -7,7 +7,7 @@ addpath('./plotFunctions');
 rng(1);
 
 for modelNameString = { ...
-        'interval_40m'} %%%%% This has to be changed depended on which specification
+        'interval_censnorm_server_v3'} %%%%% This has to be changed depended on which specification
     
     CalculationData = load(modelNameString{1});
     plotMonopolist( ...
@@ -20,7 +20,7 @@ end;
 % Start
     close all;
     clear;
-    Interval = load('interval_40m'); %%%%%% This has to be changed too
+    Interval = load('interval_censnorm_server_v3'); %%%%%% This has to be changed too
     
 % Calculate necessary series
     nContracts = Interval.Model.nContracts;
@@ -51,7 +51,7 @@ end;
         set(findall(gcf,'type','text'),'FontSize',27);
         
    % Save
-       fileName = '../figuresAlternative/competition_vs_monopoly_quantities_20m.pdf';        
+       fileName = '../figuresAlternative/interval_censnorm_server_v3.pdf';        
        export_fig(fileName, '-transparent');
        fileName = [fileName(1: length(fileName)-4), '.eps'];
        print(fileName, '-depsc2');

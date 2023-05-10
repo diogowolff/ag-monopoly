@@ -35,14 +35,27 @@ classdef population
                 nworkers = 0;
             end
             n_Contracts = Model.nContracts;
-            u_Matrix = zeros(n, Model.nContracts);
-            c_Matrix = zeros(n, Model.nContracts);
-            e_Matrix = zeros(n, Model.nContracts);
             type_List = cell(1,n);
+            
             % For reproducibility, generate types outside of parfor loop
             for i = 1:n
                 type_List{i} = typeDistribution(Model);
             end
+            
+            for i = length(type_List):-1:1
+                if type_List{i}.A > 1/type_List{i}.theta
+                    type_List(i) = []; % Remove the i-th cell
+                end
+            end
+
+
+            n = length(type_List);
+
+            u_Matrix = zeros(n, Model.nContracts);
+            c_Matrix = zeros(n, Model.nContracts);
+            e_Matrix = zeros(n, Model.nContracts);
+            
+
             parfor(i = 1 : n, nworkers)
                 for j = 1 : n_Contracts
                     x = Model.contracts{j};

@@ -5,7 +5,7 @@ rng(1);
 % Input model parameters
 
 typeDistributionMean = ...
-    [1*10^-5, 1330, -360000, 50000]; % Original A was 1.9*10^-3
+    [.619*10^(-5), 1330, 0.031, 139000]; % Original A was 1.9*10^-3
 typeDistributionLogCovariance = ...
     [ 0.25 -0.01 -0.12 0    ; % c11 = 0.25 originally
      -0.01  0.28 -0.03 0    ; % c22 = 0.98 originally
@@ -15,7 +15,7 @@ typeDistributionLogCovariance = ...
 costOfPublicFunds = 0;
 
 % Calculation parameters
-populationSize = 1*10^4;
+populationSize = 1.5*10^5;
 
 CalculationParametersEquilibrium.behavioralAgents = 0.01;
 CalculationParametersEquilibrium.fudge            = 1e-6;
@@ -24,12 +24,12 @@ CalculationParametersEquilibrium.tolerance        = 1;
 
 CalculationParametersOptimum.maxIterations        = 1e3;
 CalculationParametersOptimum.tolerance            = 0.01;
-CalculationParametersOptimum.knitro               = 'false';
+CalculationParametersOptimum.knitro               = 'true';
 CalculationParametersOptimum.knitroMultistartN    = 300;
 
 % List of models
-modelName{1}              = 'interval_censnorm_server_v18';
-slopeVector{1}            = 0:0.04:1;
+modelName{1}              = 'interval_gamma';
+slopeVector{1}            = 0:.04:1;
 moralHazardLogVariance{1} = 0.28;
 
 % Loop
@@ -39,10 +39,10 @@ for i = 1 : nSimulations
     innerTypeDistributionLogCovariance = typeDistributionLogCovariance;
 
     innerTypeDistributionLogCovariance(2, 2) = moralHazardLogVariance{i};
-    Model = healthcaralognormalmodel_censnorm(slopeVector{i}, typeDistributionMean, innerTypeDistributionLogCovariance, 0);
+    Model = healthcaralognormalmodel_gamma(slopeVector{i}, typeDistributionMean, innerTypeDistributionLogCovariance);
     
     Population = population(Model, populationSize);
-
+    populationSize = length(Population.typeList);
     [pEquilibrium, DEquilibrium, ACEquilibrium, ComputationOutputEquilibrium] = ...
             Population.findequilibrium(CalculationParametersEquilibrium);
     WEquilibrium = Population.welfare(pEquilibrium, ...

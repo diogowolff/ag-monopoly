@@ -1,4 +1,4 @@
-classdef healthcaralognormalmodel_censnorm < model
+classdef healthcaralognormalmodel_gamma < model
     %healthcaralognormalmodel_censnorm Creates a health insurance model as in
     %the Azevedo and Gottlieb paper. Subclass of the model class.
     %   This models have CARA preferences, truncated normal losses, linear contracts,
@@ -12,18 +12,16 @@ classdef healthcaralognormalmodel_censnorm < model
     properties
         typeDistributionMean
         typeDistributionLogCovariance
-        lowerBound
     end
     
     methods
         % Constructor
-        function Model = healthcaralognormalmodel_censnorm(slopeVector, ...
-                typeDistributionMean, typeDistributionLogCovariance, lowerBound)
+        function Model = healthcaralognormalmodel_gamma(slopeVector, ...
+                typeDistributionMean, typeDistributionLogCovariance)
             
             Model.typeDistributionMean = typeDistributionMean;
             Model.typeDistributionLogCovariance = ...
                 typeDistributionLogCovariance;
-            Model.lowerBound = lowerBound;
             
             n = length(slopeVector);
             for i = 1:n
@@ -34,23 +32,17 @@ classdef healthcaralognormalmodel_censnorm < model
         end
             
         function u = uFunction(~, x, type)
-                alpha = (type.a-type.M)./type.S;
-
-                left_term = (type.M.*type.A + (type.A .* type.S).^2 ./ 2) + ... 
-                    log((1 - normcdf(alpha - type.S .* type.A))./(1 - normcdf(alpha)));
-
-                right_term = (type.M.*type.A.*(1-x.slope) + (type.A .* type.S .* (1-x.slope)).^2 ./ 2) + ...
-                    log((1 - normcdf(alpha - type.S .* type.A .* (1-x.slope)))./(1 - normcdf(alpha)));
-
+                left_term = -type.k.*log(1-type.A.*type.theta);
+                right_term = -type.k.*log(1-type.A.*(1-x.slope).*type.theta);
 
                 u = (left_term - right_term)./type.A + ...
                  (x.slope.^2) .* 0.5 .* type.H;
         end
         
         function c = cFunction(~, x, type)
-                alpha = (type.a-type.M)./type.S;
+               
 
-                c = x.slope .* (type.M + normpdf(alpha)./(1-normcdf(alpha)) .* type.S) ...
+                c = x.slope .* type.k .* type.theta ...
                 + (x.slope.^2) .* type.H;
         end
         
@@ -63,9 +55,8 @@ classdef healthcaralognormalmodel_censnorm < model
                 Model.typeDistributionMean, Model.typeDistributionLogCovariance, 1);
             Type.A = v(1);
             Type.H = v(2);
-            Type.M = -100000*log(v(3));
-            Type.S = v(4);
-            Type.a = Model.lowerBound;
+            Type.k = v(3);
+            Type.theta = v(4);
         end;
         
         function [populationSize, CalculationParametersEquilibrium, CalculationParametersOptimum] = ...
@@ -100,7 +91,6 @@ classdef healthcaralognormalmodel_censnorm < model
             %   Warning: for some reason MATLAB chokes if one of the variables has 0
             %   variance, so always put at least a tiny bit of bogus variance.
 
-            meanVector(3) = exp(-meanVector(3)/100000);
             nDraws = 1;
             if (length(varargin) == 1)
                 nDraws = varargin{1};

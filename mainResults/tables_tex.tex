@@ -1,0 +1,91 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{comment}
+
+\begin{document}
+
+\begin{comment}
+\begin{center}
+\captionof{table}{Statistics of contracts under normal losses}
+\begin{tabular}{|lcccccc|}
+\hline
+ & No insurance & $\geq 70 \%$ insurance & $\geq 80 \%$ insurance & $\geq 90 \%$ insurance & Consumer Surplus & Profit\\
+\hline
+Equilibrium & 0.00358 & 11.0559 & 4.0794 & 0.29321 &&\\
+Monopoly & 70.8433 & 11.3573 & 5.6985 & 0.3306 && \\
+Welfare-maximum & 0 & 89.4112 & 62.8434 & 4.4813 &&\\
+\hline
+\end{tabular}
+\end{center}
+\end{comment}
+
+\begin{center}
+\captionof{table}{Statistics of contracts under normal losses}
+\begin{tabular}{|lcccc|}
+\hline
+ & No insurance & $\geq 70 \%$ insurance & Consumer Surplus & Profit\\
+\hline
+Equilibrium & 0.00358 & 11.0559 & 3047 & -33\\
+Monopoly & 70.8433 & 11.3573  & 1308 & 915 \\
+Welfare-maximum & 0 & 89.4112 & 5769 & -2476\\
+\hline
+\end{tabular}
+\end{center}
+
+The CS and profit were calculated by generating a 1M population and applying over it the contracts from the original 40M simulation.
+
+\begin{comment}
+    \begin{center}
+\captionof{table}{Statistics of contracts under truncated normal losses}
+\begin{tabular}{|lcccccc|}
+\hline
+ & No insurance & $\geq 70 \%$ insurance & $\geq 80 \%$ insurance & $\geq 90 \%$ insurance & Consumer Surplus & Profit\\
+\hline
+Equilibrium & 0.00393 & 5.81 & 2.33 & 0.41 & 5453 & -40\\
+Monopoly & 78.27 & 7.87 & 5.16 & 1.10 & 2406 & 1393\\
+Welfare-maximum & 0 & 69.37 & 48.91 & 12.93 & 8084 & -2133\\
+\hline
+\end{tabular}
+\end{center}
+\end{comment}
+
+
+
+\begin{center}
+\captionof{table}{Statistics of contracts under truncated normal losses}
+\begin{tabular}{|lcccc|}
+\hline
+ & No insurance & $\geq 70 \%$ insurance & Consumer Surplus & Profit\\
+\hline
+Equilibrium & 0.00393 & 5.81 & 5453 & -40\\
+Monopoly & 78.27 & 7.87 & 2406 & 1393\\
+Welfare-maximum & 0 & 69.37 & 8084 & -2133\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+    \captionof{table}{Calibration of each model}
+    \begin{tabular}{|lcc|}
+    \hline
+         &  Normal losses & Truncated normal losses\\
+         \hline
+        Mean loss & 4340 & 4250 \\
+        Std. dev. of losses & 24470 & 3000\\
+        Mean risk aversion & $1\times10^{-5}$ & $65\times10^{-5}$  \\
+        Moral hazard parameter & 1330 & 1330 \\ 
+        CE & 7335 & 10000 \\
+        \hline
+    \end{tabular}
+\end{center}
+
+Mean loss and Std. dev. of losses for the truncated normal aren't parameters, but calculated averages after simulating a population. The underlying moments used were $\{\mu, \sigma\} = \{1500, 4500\}.$ 
+
+\end{document}

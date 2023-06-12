@@ -15,7 +15,7 @@ typeDistributionLogCovariance = ...
 costOfPublicFunds = 0;
 
 % Calculation parameters
-populationSize = 5*10^3;
+populationSize = 1*10^6;
 
 CalculationParametersEquilibrium.behavioralAgents = 0.01;
 CalculationParametersEquilibrium.fudge            = 1e-6;
@@ -28,7 +28,7 @@ CalculationParametersOptimum.knitro               = 'true';
 CalculationParametersOptimum.knitroMultistartN    = 300;
 
 % List of models
-modelName{1}              = 'interval_test';
+modelName{1}              = 'interval_test_check_profit';
 slopeVector{1}            = 0:0.04:1;
 moralHazardLogVariance{1} = 0.28;
 

@@ -10,10 +10,10 @@ rng(1);
 %% Competitive equilibrium vs monopoly histogram
 
 % Start
-    modelNameString = 'interval_gamma';
+    modelNameString = 'interval_censnorm_server_final_30m';
     
     Interval = load(modelNameString); %%%%%% This has to be changed too
-    
+    Interval.Model.upperBound = 1000000000000000;
 % Calculate necessary series
     nContracts = Interval.Model.nContracts;
     xGrid = zeros(1, Interval.Model.nContracts);
@@ -105,7 +105,7 @@ Population = population(Interval.Model, populationSize);
 meanLossTypeVector = zeros(Population.size, 1);
 riskAversionVector = zeros(Population.size, 1);
 for i = 1 : Population.size
-    meanLossTypeVector(i) = Population.typeList{i}.k.*Population.typeList{i}.theta;
+    meanLossTypeVector(i) = Population.typeList{i}.M;
     riskAversionVector(i) = Population.typeList{i}.A;
 end;
 

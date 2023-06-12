@@ -32,10 +32,13 @@ classdef healthcaralognormalmodel_gamma < model
         end
             
         function u = uFunction(~, x, type)
-                left_term = -type.k.*log(1-type.A.*type.theta);
-                right_term = -type.k.*log(1-type.A.*(1-x.slope).*type.theta);
 
-                u = (left_term - right_term)./type.A + ...
+                left_term = log(((1-type.A.*type.theta)./ ...
+                    (1-type.A.*(1-x.slope).*type.theta)).^(-type.k));
+            
+                
+
+                u = (left_term)./type.A + ...
                  (x.slope.^2) .* 0.5 .* type.H;
         end
         
@@ -53,7 +56,7 @@ classdef healthcaralognormalmodel_gamma < model
         function Type = typeDistribution(Model)
             v = Model.lognrndfrommoments(...
                 Model.typeDistributionMean, Model.typeDistributionLogCovariance, 1);
-            Type.A = v(1);
+            Type.A = min(v(1), 1/v(4) - 1*10^-6);
             Type.H = v(2);
             Type.k = v(3);
             Type.theta = v(4);

@@ -5,15 +5,16 @@ addpath('../Classes');
 
 %very wide range to find parameters
 
-[teste2_a, teste2_b] = meshgrid(-370000:200:-340000, 45000:250:60000);
+[teste2_a, teste2_b, teste2_c] = meshgrid(0:500:10000, 500:500:60000, 100000:50000:1000000);
 
-teste2_mean = zeros(151,61);
-teste2_var = zeros(151,61);
+teste2_mean = zeros(21,120, 19);
+teste2_var = zeros(21,120, 19);
 
-parfor k=1:151
-    for l=1:61
+parfor k=1:21
+    for l=1:120
+        for t=1:19
          typeDistributionMean = ...
-        [1*10^(-5), 1330, teste2_a(1,k), teste2_b(l,1)]; % Original A was 1.9*10^-3
+        [1*10^(-5), 1330, teste2_a(1,k,1), teste2_b(l,1,1)]; % Original A was 1.9*10^-3
         typeDistributionLogCovariance = ...
             [ 0.25 -0.01 -0.12 0    ; % c11 = 0.25 originally
              -0.01  0.28 -0.03 0    ; % c22 = 0.98 originally
@@ -23,12 +24,12 @@ parfor k=1:151
         costOfPublicFunds = 0;
 
         % Calculation parameters
-        populationSize = 5*10^1;
+        populationSize = 5*10^2;
         slopeVector            = 0:0.01:1;
 
         innerTypeDistributionLogCovariance = typeDistributionLogCovariance;
 
-        Model = healthcaralognormalmodel_censnorm(slopeVector, typeDistributionMean, innerTypeDistributionLogCovariance, 0);
+        Model = healthcaralognormalmodel_censnorm(slopeVector, typeDistributionMean, innerTypeDistributionLogCovariance, 0, teste2_c(1,1,t));
 
         Population = population(Model, populationSize);
 
@@ -38,15 +39,21 @@ parfor k=1:151
            Types(i,:) = [Population.typeList{i}.M, Population.typeList{i}.S];
         end
 
-        teste2_mean(k,l) = mean(Types(:, 1) + normpdf(-Types(:, 1)./Types(:, 2))./...
-            (1-normcdf(-Types(:, 1)./Types(:, 2))).*Types(:, 2));
+        teste2_mean(k,l, t) = mean(Types(:, 1) + (normpdf(-Types(:, 1)./Types(:, 2)) - ...
+            normpdf((teste2_c(1,1,t) -Types(:, 1))./Types(:, 2)))./...
+            (normcdf((teste2_c(1,1,t)-Types(:, 1))./Types(:, 2))-normcdf(-Types(:, 1)./...
+            Types(:, 2))).*Types(:, 2));
 
-        teste2_var(k,l) = mean(Types(:, 2).^2.*(1 - Types(:, 1)./Types(:, 2).*...
-            normpdf(-Types(:, 1)./Types(:, 2))./(1-normcdf(-Types(:, 1)./Types(:, 2))) - ...
-            (normpdf(-Types(:, 1)./Types(:, 2))./(1-normcdf(-Types(:, 1)./Types(:, 2)))).^2));
+        teste2_var(k,l, t) = mean(Types(:, 2).^2.*(1 - ((teste2_c(1,1,t) -Types(:, 1))./Types(:, 2) .* ...
+            normpdf((teste2_c(1,1,t) -Types(:, 1))./Types(:, 2)) - (-Types(:, 1)./Types(:, 2)).* ...
+            normpdf(-Types(:, 1)./Types(:, 2)))./ ...
+            (normcdf((teste2_c(1,1,t)-Types(:, 1))./Types(:, 2))-normcdf(-Types(:, 1)./...
+            Types(:, 2))) - ((normpdf(-Types(:, 1)./Types(:, 2)) - ...
+            normpdf((teste2_c(1,1,t) -Types(:, 1))./Types(:, 2)))./(normcdf((teste2_c(1,1,t)-Types(:, 1))./...
+            Types(:, 2))-normcdf(-Types(:, 1)./...
+            Types(:, 2)))).^2));
 
-        teste2_aa(k, l) = mean(Types(:, 1));
-        teste2_bb(k, l) = mean(Types(:, 2));
+        end
     end
 end
 
@@ -55,10 +62,14 @@ meanS = sqrt(25000^2 - 5100^2);
 teste2_vardif = (sqrt(teste2_var) - meanS);
 teste2_meandif = (teste2_mean - 4340);
 
-teste2 = sqrt(teste2_var);
-
-teste2_sumsq = teste2_vardif.^2 + teste2_meandif.^2;
-[row, col] = find(teste2_sumsq==min(teste2_sumsq(:)));
+a = abs(teste2_vardif) < 20000;
+b = abs(teste2_meandif) < 1000;
+c = logical(a.*b);
+teste = teste2_a(c);
+teste2 = teste2_b(c);
+teste3 = teste2_c(c);
+testeidk = [teste, teste2, teste3];
+idk = teste2_sd(b);
 
 figure;
 subplot(1,2,1);
@@ -119,7 +130,7 @@ simu_mean
 
 
 
-[teste2_a, teste2_b] = meshgrid(-380000:500:-350000, 40000:50:70000);
+[teste2_a, teste2_b] = meshgrid(-5000:500:10000, 0:500:60000);
 
 teste2_mean = teste2_a + normpdf(-teste2_a./teste2_b)./...
     (1-normcdf(-teste2_a./teste2_b)).*teste2_b;
@@ -133,12 +144,13 @@ meanS = sqrt(25000^2 - 5100^2);
 teste2_sddif = (teste2_sd - meanS);
 teste2_meandif = (teste2_mean - 4340);
 
-a = abs(teste2_sddif) < 250;
-b = abs(teste2_meandif) < 750;
+a = abs(teste2_sddif) < 5000;
+b = abs(teste2_meandif) < 50;
 c = logical(a.*b);
 teste = teste2_a(c);
 teste2 = teste2_b(c);
 testeidk = [teste, teste2];
+idk = teste2_sd(b);
 
 % Extract the coordinates from testeidk
 x = testeidk(:,1);

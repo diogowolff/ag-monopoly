@@ -5,7 +5,7 @@ rng(1);
 % Input model parameters
 
 typeDistributionMean = ...
-    [.619*10^(-5), 1330, 0.031, 139000]; % Original A was 1.9*10^-3
+    [1*10^(-5), 1330, 0.03, 150000]; % Original A was 1.9*10^-3
 typeDistributionLogCovariance = ...
     [ 0.25 -0.01 -0.12 0    ; % c11 = 0.25 originally
      -0.01  0.28 -0.03 0    ; % c22 = 0.98 originally
@@ -15,7 +15,7 @@ typeDistributionLogCovariance = ...
 costOfPublicFunds = 0;
 
 % Calculation parameters
-populationSize = 1.5*10^5;
+populationSize = 5*10^6;
 
 CalculationParametersEquilibrium.behavioralAgents = 0.01;
 CalculationParametersEquilibrium.fudge            = 1e-6;
@@ -28,13 +28,13 @@ CalculationParametersOptimum.knitro               = 'true';
 CalculationParametersOptimum.knitroMultistartN    = 300;
 
 % List of models
-modelName{1}              = 'interval_gamma';
+modelName{1}              = 'interval_gamma_v9';
 slopeVector{1}            = 0:.04:1;
 moralHazardLogVariance{1} = 0.28;
 
 % Loop
 nSimulations = length(modelName);
-
+i=1;
 for i = 1 : nSimulations
     innerTypeDistributionLogCovariance = typeDistributionLogCovariance;
 

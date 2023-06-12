@@ -13,17 +13,20 @@ classdef healthcaralognormalmodel_censnorm < model
         typeDistributionMean
         typeDistributionLogCovariance
         lowerBound
+        upperBound
     end
     
     methods
         % Constructor
         function Model = healthcaralognormalmodel_censnorm(slopeVector, ...
-                typeDistributionMean, typeDistributionLogCovariance, lowerBound)
+                typeDistributionMean, typeDistributionLogCovariance, lowerBound, ...
+                upperBound)
             
             Model.typeDistributionMean = typeDistributionMean;
             Model.typeDistributionLogCovariance = ...
                 typeDistributionLogCovariance;
             Model.lowerBound = lowerBound;
+            Model.upperBound = upperBound;
             
             n = length(slopeVector);
             for i = 1:n
@@ -36,11 +39,15 @@ classdef healthcaralognormalmodel_censnorm < model
         function u = uFunction(~, x, type)
                 alpha = (type.a-type.M)./type.S;
 
+                beta = (type.b - type.M)./type.S;
+
                 left_term = (type.M.*type.A + (type.A .* type.S).^2 ./ 2) + ... 
                     log((1 - normcdf(alpha - type.S .* type.A))./(1 - normcdf(alpha)));
 
                 right_term = (type.M.*type.A.*(1-x.slope) + (type.A .* type.S .* (1-x.slope)).^2 ./ 2) + ...
-                    log((1 - normcdf(alpha - type.S .* type.A .* (1-x.slope)))./(1 - normcdf(alpha)));
+                    log((normcdf(beta - type.S .* type.A .* (1-x.slope)) - ...
+                    normcdf(alpha - type.S .* type.A .* (1-x.slope)))./...
+                    (normcdf(beta) - normcdf(alpha)));
 
 
                 u = (left_term - right_term)./type.A + ...
@@ -50,7 +57,10 @@ classdef healthcaralognormalmodel_censnorm < model
         function c = cFunction(~, x, type)
                 alpha = (type.a-type.M)./type.S;
 
-                c = x.slope .* (type.M + normpdf(alpha)./(1-normcdf(alpha)) .* type.S) ...
+                beta = (type.b - type.M)./type.S;
+
+                c = x.slope .* (type.M + (normpdf(alpha) - normpdf(beta))./...
+                    (normcdf(beta)-normcdf(alpha)) .* type.S) ...
                 + (x.slope.^2) .* type.H;
         end
         
@@ -63,9 +73,10 @@ classdef healthcaralognormalmodel_censnorm < model
                 Model.typeDistributionMean, Model.typeDistributionLogCovariance, 1);
             Type.A = v(1);
             Type.H = v(2);
-            Type.M = -100000*log(v(3));
+            Type.M = v(3);
             Type.S = v(4);
             Type.a = Model.lowerBound;
+            Type.b = Model.upperBound;
         end;
         
         function [populationSize, CalculationParametersEquilibrium, CalculationParametersOptimum] = ...
@@ -100,7 +111,6 @@ classdef healthcaralognormalmodel_censnorm < model
             %   Warning: for some reason MATLAB chokes if one of the variables has 0
             %   variance, so always put at least a tiny bit of bogus variance.
 
-            meanVector(3) = exp(-meanVector(3)/100000);
             nDraws = 1;
             if (length(varargin) == 1)
                 nDraws = varargin{1};

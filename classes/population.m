@@ -42,11 +42,11 @@ classdef population
                 type_List{i} = typeDistribution(Model);
             end
             
-            for i = length(type_List):-1:1
-                if type_List{i}.A > 1/type_List{i}.theta
-                    type_List(i) = []; % Remove the i-th cell
-                end
-            end
+            %for i = length(type_List):-1:1
+            %   if type_List{i}.A > 1/type_List{i}.theta
+            %        type_List(i) = []; % Remove the i-th cell
+            %    end
+            %end
 
 
             n = length(type_List);
@@ -69,6 +69,9 @@ classdef population
             if any( e_Matrix(:) ) % If there is externality
                 Population.eMatrix    = e_Matrix; % otherwise leave matrix empty
             end
+
+
+
             Population.typeList   = type_List;
             Population.size       = n;
             Population.nContracts = n_Contracts;
@@ -441,6 +444,7 @@ classdef population
                     g = @(dpj) f( dp_update(dpj,j,dp) );
                     [dpj, W] = fminbnd(g, lower_bound(j), upper_bound(j));
                     dp(j) = dpj;
+
                 end;
 
                 % Update iteration, error, and improvement in welfare.
